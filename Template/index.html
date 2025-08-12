@@ -1,0 +1,527 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>MeroEvents | Event Planner</title>
+
+    <link
+        href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&family=Poppins:wght@300;400;500;600&display=swap"
+        rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&family=Poppins:wght@300;400;500;600&display=swap"
+        rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
+    <!-- <link rel="stylesheet" href="static/css/style.css"> -->
+    <style>
+        html,
+        body {
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            min-height: 100%;
+            overflow-x: hidden;
+            font-family: 'Poppins', sans-serif;
+            background-color: #ffffff;
+            color: #2d2f53;
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        .meroevents-wrapper {
+            flex: 1 0 auto;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        .meroevents-wrapper .navbar {
+            width: 100%;
+            background: linear-gradient(to right, #7765F6, #2D7DD2);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0.85rem 3rem;
+            box-sizing: border-box;
+            font-family: 'Montserrat', sans-serif;
+            color: white;
+            position: fixed;
+            top: 0;
+            left: 0;
+            z-index: 9999;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+        }
+
+        .meroevents-wrapper .logo-section {
+            display: flex;
+            align-items: center;
+            gap: 0.7rem;
+            font-weight: 700;
+            font-size: 1.3rem;
+            letter-spacing: 1px;
+            padding-left: 10px;
+        }
+
+        .meroevents-wrapper .logo-section a {
+            color: white;
+            text-decoration: none;
+        }
+
+        .meroevents-wrapper .nav-links {
+            display: flex;
+            gap: 2rem;
+            align-items: center;
+            font-weight: 500;
+            font-size: 1rem;
+            padding-right: 10px;
+        }
+
+        .meroevents-wrapper .nav-links a {
+            color: white;
+            text-decoration: none;
+            transition: opacity 0.3s ease;
+        }
+
+        .meroevents-wrapper .nav-links a:hover {
+            opacity: 0.75;
+        }
+
+        .meroevents-wrapper .login-btn {
+            border: 1.5px solid white;
+            padding: 0.4rem 1.2rem;
+            border-radius: 7px;
+            background: transparent;
+            color: white;
+            cursor: pointer;
+            transition: background 0.3s ease;
+            font-size: 1rem;
+        }
+
+        .meroevents-wrapper .login-btn:hover {
+            background: rgba(255, 255, 255, 0.15);
+        }
+
+        .meroevents-wrapper .login-btn a {
+            color: white;
+            text-decoration: none;
+        }
+
+        .meroevents-wrapper .hamburger {
+            display: none;
+            flex-direction: column;
+            cursor: pointer;
+            gap: 5px;
+        }
+
+        .meroevents-wrapper .hamburger span {
+            width: 28px;
+            height: 3.5px;
+            background-color: white;
+            border-radius: 3px;
+            transition: 0.3s ease;
+        }
+
+        .meroevents-wrapper .hamburger.open span:nth-child(1) {
+            transform: rotate(45deg) translate(5px, 5px);
+        }
+
+        .meroevents-wrapper .hamburger.open span:nth-child(2) {
+            opacity: 0;
+        }
+
+        .meroevents-wrapper .hamburger.open span:nth-child(3) {
+            transform: rotate(-45deg) translate(5px, -5px);
+        }
+
+        @media (max-width: 768px) {
+            .meroevents-wrapper .nav-links {
+                position: fixed;
+                top: 60px;
+                left: 0;
+                width: 100vw;
+                background: #2D7DD2;
+                flex-direction: column;
+                gap: 0;
+                max-height: 0;
+                overflow: hidden;
+                opacity: 0;
+                transition: all 0.3s ease;
+                z-index: 998;
+                padding: 0;
+            }
+
+            .meroevents-wrapper .nav-links.active {
+                max-height: 320px;
+                opacity: 1;
+            }
+
+            .meroevents-wrapper .nav-links a,
+            .meroevents-wrapper .login-btn {
+                padding: 1rem 0;
+                width: 100%;
+                text-align: center;
+                border-bottom: 1px solid rgba(255, 255, 255, 0.15);
+            }
+
+            .meroevents-wrapper .login-btn {
+                border-radius: 0;
+                margin: 0;
+            }
+
+            .meroevents-wrapper .hamburger {
+                display: flex;
+            }
+        }
+
+        .meroevents-wrapper .meroevents {
+            flex: 1 0 auto;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 100px 20px 40px;
+            margin-top: 60px;
+        }
+
+        .meroevents-wrapper main.container {
+            max-width: 1300px;
+            width: 100%;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 40px;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .meroevents-wrapper .left {
+            flex: 1 1 480px;
+        }
+
+        .meroevents-wrapper .left h1 {
+            font-size: 2.4rem;
+            font-weight: 700;
+            margin-bottom: 20px;
+            color: #1d1d2c;
+        }
+
+        .meroevents-wrapper .left p {
+            font-size: 1.15rem;
+            color: #444;
+            margin-bottom: 28px;
+            line-height: 1.6;
+            max-width: 500px;
+        }
+
+        .meroevents-wrapper .start-btn {
+            display: inline-block;
+            background: linear-gradient(to right, #7765F6, #2D7DD2);
+            color: #fff;
+            padding: 14px 30px;
+            font-size: 1.05rem;
+            border: none;
+            border-radius: 15px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            font-weight: 600;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+        }
+
+        .meroevents-wrapper .start-btn:hover {
+            background-color: #1c1d35;
+            transform: translateY(-1.5px);
+        }
+
+        .meroevents-wrapper .right {
+            flex: 1 1 380px;
+            position: relative;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .meroevents-wrapper .right img {
+            width: 100%;
+            border-radius: 10px;
+            max-height: 380px;
+            object-fit: cover;
+            box-shadow: 0 6px 18px rgba(0, 0, 0, 0.08);
+        }
+
+        .meroevents-wrapper .rating {
+            position: absolute;
+            top: 0;
+            left: 0;
+            background-color: #3CB371;
+            color: white;
+            padding: 10px 16px;
+            border-top-left-radius: 10px;
+            border-bottom-right-radius: 16px;
+            font-size: 0.85rem;
+            font-weight: 500;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+
+        .meroevents-wrapper .rating::before {
+            content: '⭐️⭐️⭐️⭐️⭐️';
+            display: block;
+            font-size: 0.8rem;
+            margin-bottom: 3px;
+        }
+
+        @media (max-width: 900px) {
+            .meroevents-wrapper main.container {
+                flex-direction: column;
+                text-align: center;
+            }
+
+            .meroevents-wrapper .right {
+                order: -1;
+                width: 100%;
+            }
+
+            .meroevents-wrapper .left h1 {
+                font-size: 2rem;
+            }
+
+            .meroevents-wrapper .left p {
+                font-size: 1.05rem;
+            }
+
+            .meroevents-wrapper .right img {
+                max-height: 280px;
+            }
+
+            .meroevents-wrapper .rating {
+                font-size: 0.75rem;
+                padding: 8px 14px;
+            }
+
+            .meroevents-wrapper .rating::before {
+                font-size: 0.75rem;
+            }
+        }
+
+        .meroevents-wrapper .meroevents-footer {
+            background: linear-gradient(to right, #7765F6, #2D7DD2);
+            color: white;
+            text-align: center;
+            padding: 16px 8px;
+            font-size: 0.9rem;
+            font-weight: 500;
+            flex-shrink: 0;
+        }
+
+        .meroevents-wrapper .meroevents-footer a {
+            color: #f49939;
+            text-decoration: none;
+            margin-left: 8px;
+        }
+
+        @media (max-width: 600px) {
+            .meroevents-wrapper .meroevents-footer {
+                font-size: 1rem;
+            }
+        }
+
+        .meroevents-wrapper .signup-wrapper {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 70vh;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        .meroevents-wrapper .signup-container {
+            display: flex;
+            background: white;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.12);
+            border-radius: 16px;
+            max-width: 900px;
+            width: 100%;
+            overflow: hidden;
+        }
+
+        .meroevents-wrapper .signup-left,
+        .meroevents-wrapper .signup-right {
+            flex: 1 1 50%;
+            padding: 50px 40px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .meroevents-wrapper .signup-left {
+            background: linear-gradient(135deg, #7765F6 0%, #2D7DD2 100%);
+            color: white;
+            font-weight: 600;
+            border-top-left-radius: 16px;
+            border-bottom-left-radius: 16px;
+        }
+
+        .meroevents-wrapper .signup-left h2 {
+            font-size: 2.2rem;
+            margin-bottom: 24px;
+        }
+
+        .meroevents-wrapper .signup-left p {
+            font-size: 1.1rem;
+            line-height: 1.5;
+            margin-bottom: 30px;
+            font-weight: 400;
+        }
+
+        .meroevents-wrapper .signup-left a {
+            color: #f49939;
+            font-weight: 600;
+            text-decoration: none;
+            margin-top: auto;
+        }
+
+        .meroevents-wrapper .signup-left a:hover {
+            text-decoration: underline;
+        }
+
+        .meroevents-wrapper .signup-right h2 {
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 32px;
+            color: #2d2f53;
+        }
+
+        .meroevents-wrapper .signup-form-group {
+            margin-bottom: 20px;
+            width: 100%;
+        }
+
+        .meroevents-wrapper .signup-form-group input {
+            width: 100%;
+            padding: 14px 18px;
+            border: 1.8px solid #cccccc;
+            border-radius: 10px;
+            font-size: 1rem;
+            font-weight: 400;
+            font-family: 'Poppins', sans-serif;
+            outline: none;
+            transition: border-color 0.3s ease;
+        }
+
+        .meroevents-wrapper .signup-form-group input:focus {
+            border-color: #7765F6;
+            box-shadow: 0 0 5px rgba(119, 101, 246, 0.5);
+        }
+
+        .meroevents-wrapper .signup-btn {
+            width: 100%;
+            padding: 16px 0;
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: white;
+            background: linear-gradient(to right, #7765F6, #2D7DD2);
+            border: none;
+            border-radius: 15px;
+            cursor: pointer;
+            transition: background 0.3s ease;
+            box-shadow: 0 6px 12px rgba(119, 101, 246, 0.6);
+        }
+
+        .meroevents-wrapper .signup-btn:hover {
+            background-color: #1c1d35;
+            transform: translateY(-1.5px);
+        }
+
+        @media (max-width: 900px) {
+            .meroevents-wrapper .signup-container {
+                flex-direction: column;
+                border-radius: 0;
+            }
+
+            .meroevents-wrapper .signup-left,
+            .meroevents-wrapper .signup-right {
+                flex: 1 1 100%;
+                padding: 40px 30px;
+            }
+
+            .meroevents-wrapper .signup-left {
+                border-radius: 0;
+            }
+
+            .meroevents-wrapper .signup-right h2 {
+                text-align: center;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="meroevents-wrapper">
+
+        <nav class="navbar">
+            <div class="logo-section">
+                <a href="#"><img src="static/outlined_logo.svg" alt="MeroEvents" style="height: 30px;" /></a>
+                <div class="logo-text"><a href="/">MeroEvents</a></div>
+            </div>
+
+            <div class="hamburger" onclick="toggleMenu(this)">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+
+            <div class="nav-links" id="navLinks">
+                {% block navbar %}
+                <a href="#">Home</a>
+                <a href="#">Services</a>
+                <a href="#">About</a>
+                <a href="#">Contact</a>
+
+                {% if request.session.logged_in %}
+                <button class="login-btn"><a href="/student">Profile</a></button>
+                {% else %}
+                <button class="login-btn"><a href="/login">Login</a></button>
+                {% endif %}
+                {% endblock navbar %}
+            </div>
+        </nav>
+
+        <section class="meroevents">
+            {% block section %}
+            <main class="container">
+                <div class="left">
+                    <h1>Plan Your Events with Ease</h1>
+                    <p>MeroEvents is your one-stop platform for seamless event planning. Whether it's a wedding,
+                        corporate
+                        event, or a personal celebration, we've got you covered.</p>
+                    <a href="#" class="start-btn">Get Started</a>
+                </div>
+                <div class="right">
+                    <div class="rating">Top Rated</div>
+                    <img src="static/events.jpg" alt="Event Planning" />
+                </div>
+            </main>
+            {% endblock %}
+        </section>
+
+        <footer class="meroevents-footer">
+            © 2025 MeroEvents. All rights reserved. | <a href="#">Privacy Policy</a>
+        </footer>
+
+        <script>
+            function toggleMenu(icon) {
+                icon.classList.toggle("open");
+                document.getElementById("navLinks").classList.toggle("active");
+            }
+        </script>
+
+    </div>
+</body>
+
+</html>

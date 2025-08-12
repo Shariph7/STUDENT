@@ -1,0 +1,292 @@
+{% extends "index.html" %}
+
+{% block navbar %}
+<a href="#">Home</a>
+<a href="#">Contact</a>
+<p style="font-family: 'Poppins', sans-serif;">Welcome, {{ first_name }}</p>
+<button class="login-btn"><a href="/logout">Logout</a></button>
+{% endblock navbar %}
+
+{% block section %}
+<form method="get" action="{% url 'student' %}" class="search-form">
+  <input type="text" name="event" placeholder="Search events" value="{{ query_name }}">
+  <input type="date" name="start_date" value="{{ query_date }}">
+  <button type="submit">Search</button>
+</form>
+
+<div class="event-results">
+  {% if items %}
+  <div class="event-cards-container">
+    {% for item in items %}
+    <div class="event-card">
+      <h3 class="event-title">{{ item.event }}</h3>
+      <p><strong>Date:</strong> {{ item.start_date }}</p>
+      {% if item.venue %}
+      <p><strong>Venue:</strong> {{ item.venue }}</p>
+      {% endif %}
+      <button class="book-now-btn" data-event-id="{{ item.id }}"
+        data-booked="{% if item.id in booked_event_ids %}true{% else %}false{% endif %}" style="padding: 7px 12px;
+                background: linear-gradient(to right, #7765F6, #2D7DD2);
+                color: white;
+                border: none;
+                border-radius: 4px;
+                font-size: 1rem;
+                font-weight: 500;
+                font-family: 'Poppins', sans-serif;
+                cursor: pointer;
+                transition: background 0.3s ease, transform 0.2s ease;">
+        {% if item.id in booked_event_ids %}Booked{% else %}Book Now{% endif %}
+      </button>
+    </div>
+    {% endfor %}
+  </div>
+  {% else %}
+  {% if query_name or query_date %}
+  <p style="margin-left: 30px;">No events found for your search.</p>
+  {% endif %}
+  {% endif %}
+</div>
+
+<!-- Modal -->
+<div id="myModal" class="modal">
+  <div class="modal-content">
+    <img src="static/meroevents.svg" alt="meroevents" style="width: 180px; height: auto;">
+    <p id="modalText">Are you sure you want to continue?</p>
+    <div class="modal-buttons" id="modalButtons"></div>
+  </div>
+</div>
+
+<script>
+  const modal = document.getElementById("myModal");
+  const modalText = document.getElementById("modalText");
+  const modalButtons = document.getElementById("modalButtons");
+  let selectedEventId = null;
+  let selectedButton = null;
+  let isBooked = false;
+
+  document.querySelectorAll(".book-now-btn").forEach(btn => {
+    btn.addEventListener("click", function () {
+      selectedEventId = this.dataset.eventId;
+      selectedButton = this;
+      isBooked = this.dataset.booked === "true";
+      modalButtons.innerHTML = "";
+
+      if (isBooked) {
+        modalText.textContent = "You have already booked this event.";
+        const cancelBookingBtn = document.createElement("button");
+        cancelBookingBtn.textContent = "Cancel Booking";
+        cancelBookingBtn.className = "btn";
+        cancelBookingBtn.onclick = function () {
+          fetch("{% url 'cancel_event' %}", {
+            method: "POST",
+            headers: {
+              "X-CSRFToken": "{{ csrf_token }}",
+              "Content-Type": "application/x-www-form-urlencoded"
+            },
+            body: `event_id=${selectedEventId}`
+          })
+            .then(res => res.json())
+            .then(data => {
+              if (data.success) {
+                selectedButton.textContent = "Book Now";
+                selectedButton.dataset.booked = "false";
+              }
+              modal.style.display = "none";
+            });
+        };
+        modalButtons.appendChild(cancelBookingBtn);
+      } else {
+        modalText.textContent = "Are you sure you want to continue?";
+        const goOnBtn = document.createElement("button");
+        goOnBtn.textContent = "Go On";
+        goOnBtn.className = "btn";
+        goOnBtn.onclick = function () {
+          fetch("{% url 'book_event' %}", {
+            method: "POST",
+            headers: {
+              "X-CSRFToken": "{{ csrf_token }}",
+              "Content-Type": "application/x-www-form-urlencoded"
+            },
+            body: `event_id=${selectedEventId}`
+          }).then(() => {
+            selectedButton.textContent = "Booked";
+            selectedButton.dataset.booked = "true";
+            modal.style.display = "none";
+          });
+        };
+
+        const cancelBtn = document.createElement("button");
+        cancelBtn.textContent = "Cancel";
+        cancelBtn.className = "btn";
+        cancelBtn.onclick = () => modal.style.display = "none";
+
+        modalButtons.appendChild(goOnBtn);
+        modalButtons.appendChild(cancelBtn);
+      }
+
+      modal.style.display = "block";
+    });
+  });
+
+  window.onclick = function (event) {
+    if (event.target === modal) {
+      modal.style.display = "none";
+    }
+  };
+</script>
+
+<style>
+  .modal-buttons {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+    margin-top: 15px;
+  }
+
+  .btn {
+    padding: 7px 12px;
+    background: linear-gradient(to right, #7765F6, #2D7DD2);
+    color: white;
+    border: none;
+    border-radius: 4px;
+    font-size: 1rem;
+    font-weight: 500;
+    font-family: 'Poppins', sans-serif;
+    cursor: pointer;
+    transition: background 0.3s ease, transform 0.2s ease;
+  }
+
+  .modal {
+    display: none;
+    position: fixed;
+    z-index: 1000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgba(0, 0, 0, 0.5);
+  }
+
+  .modal-content {
+    background-color: white;
+    margin: 10% auto;
+    padding: 20px;
+    border-radius: 8px;
+    width: 300px;
+    text-align: center;
+  }
+
+  .search-form {
+    position: absolute;
+    top: 90px;
+    left: 30px;
+    width: 600px;
+    display: flex;
+    gap: 14px;
+    padding: 14px 18px;
+    border-radius: 6px;
+    font-family: 'Poppins', sans-serif;
+    align-items: center;
+    z-index: 1000;
+  }
+
+  .search-form input[type="text"],
+  .search-form input[type="date"] {
+    padding: 12px 16px;
+    border: none;
+    border-bottom: 2px solid transparent;
+    border-radius: 4px;
+    font-size: 1rem;
+    background: #f7f7f7;
+    transition: border-color 0.3s ease, background-color 0.3s ease;
+  }
+
+  .search-form input[type="text"]:focus,
+  .search-form input[type="date"]:focus {
+    background: #fff;
+    border-bottom: 2px solid #7765F6;
+    outline: none;
+  }
+
+  .search-form button {
+    padding: 12px 20px;
+    background: linear-gradient(to right, #7765F6, #2D7DD2);
+    color: white;
+    border: none;
+    border-radius: 4px;
+    font-size: 1rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background 0.3s ease, transform 0.2s ease;
+  }
+
+  .search-form button:hover {
+    transform: translateY(-1px);
+    background: linear-gradient(to right, #6b57e5, #256bb5);
+  }
+
+  .event-results {
+    position: absolute;
+    top: 170px;
+    left: 50px;
+    width: 300px;
+    font-family: 'Poppins', sans-serif;
+    z-index: 900;
+  }
+
+  .event-cards-container {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+  }
+
+  .event-card {
+    background: white;
+    border-radius: 5px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    padding: 20px 25px;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    cursor: default;
+  }
+
+  .event-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 22px rgba(0, 0, 0, 0.15);
+  }
+
+  .event-title {
+    margin: 0 0 10px 0;
+    font-weight: 700;
+    color: #2D7DD2;
+    font-size: 1.3rem;
+  }
+
+  .event-card p {
+    margin: 6px 0;
+    font-size: 1rem;
+    color: #555;
+  }
+
+  @media (max-width: 768px) {
+    .search-form {
+      position: static;
+      width: 90vw;
+      margin: 20px auto;
+      flex-wrap: wrap;
+    }
+
+    .event-results {
+      position: static;
+      width: 90vw;
+      margin: 20px auto;
+    }
+
+    .search-form input[type="text"],
+    .search-form input[type="date"],
+    .search-form button {
+      flex: 1 1 100%;
+    }
+  }
+</style>
+{% endblock section %}
