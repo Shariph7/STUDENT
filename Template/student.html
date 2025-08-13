@@ -144,7 +144,7 @@
   }
 
   .btn {
-    padding: 7px 12px;
+    padding: 6px 12px;
     background: linear-gradient(to right, #7765F6, #2D7DD2);
     color: white;
     border: none;
@@ -230,16 +230,15 @@
     position: absolute;
     top: 170px;
     left: 50px;
-    width: 300px;
-    font-family: 'Poppins', sans-serif;
-    z-index: 900;
-  }
+    width: calc(100% - 100px);
+    max-width: 1200px;
+}
 
   .event-cards-container {
     display: flex;
-    flex-direction: column;
+    flex-wrap: wrap;
     gap: 20px;
-  }
+}
 
   .event-card {
     background: white;
@@ -248,7 +247,8 @@
     padding: 20px 25px;
     transition: transform 0.3s ease, box-shadow 0.3s ease;
     cursor: default;
-  }
+    width: 300px;
+}
 
   .event-card:hover {
     transform: translateY(-5px);
@@ -269,24 +269,73 @@
   }
 
   @media (max-width: 768px) {
-    .search-form {
-      position: static;
-      width: 90vw;
-      margin: 20px auto;
-      flex-wrap: wrap;
-    }
-
-    .event-results {
-      position: static;
-      width: 90vw;
-      margin: 20px auto;
-    }
-
-    .search-form input[type="text"],
-    .search-form input[type="date"],
-    .search-form button {
-      flex: 1 1 100%;
-    }
+  .search-form {
+    position: static;
+    width: 90vw;
+    margin: 20px auto;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 10px;
+    padding: 10px;
   }
+
+  .search-form input[type="text"],
+  .search-form input[type="date"],
+  .search-form button {
+    width: 100%;
+    font-size: 0.95rem;
+  }
+
+  /* Results section adjustments */
+  .event-results {
+    position: static;
+    width: 90vw;
+    margin: 0 auto;
+  }
+
+  .event-cards-container {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .event-card {
+    width: 100%;
+    padding: 16px 20px;
+  }
+
+  .event-title {
+    font-size: 1.2rem;
+  }
+
+  .event-card p {
+    font-size: 0.95rem;
+  }
+
+  /* Modal adjustments */
+  .modal-content {
+    width: 90%;
+    margin: 30% auto;
+    padding: 15px;
+  }
+
+  .btn {
+    font-size: 0.95rem;
+    padding: 10px;
+    width: 100%;
+    max-width: 160px;
+  }
+
+  .modal-buttons {
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  /* Button tweaks */
+  .book-now-btn {
+    font-size: 0.95rem;
+    padding: 10px;
+    width: 100%;
+  }
+}
 </style>
 {% endblock section %}
