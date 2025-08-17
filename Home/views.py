@@ -5,6 +5,7 @@ from django.contrib import messages
 from django.contrib.auth.hashers import check_password, make_password
 from django.views.decorators.csrf import csrf_exempt
 from django.http import HttpResponse, JsonResponse
+from datetime import date
 
 
 # Custom login_required decorator using session
@@ -65,6 +66,10 @@ def student(request):
 
     # Get already booked event IDs
     booked_event_ids = set(Booking.objects.filter(student=student_instance).values_list("event_id", flat=True))
+
+    # Add dynamic status
+    for event in events:
+        event.status_text = event.status()
 
     return render(request, "student.html", {
         'first_name': first_name,

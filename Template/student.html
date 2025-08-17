@@ -21,22 +21,40 @@
     <div class="event-card">
       <h3 class="event-title">{{ item.event }}</h3>
       <p><strong>Date:</strong> {{ item.start_date }}</p>
-      {% if item.venue %}
-      <p><strong>Venue:</strong> {{ item.venue }}</p>
-      {% endif %}
+      <p class="status 
+         {% if item.status_text == 'Start Soon' %}start-soon{% endif %}
+         {% if item.status_text == 'Ongoing' %}ongoing{% endif %}
+         {% if item.status_text == 'Ended' %}ended{% endif %}">
+        {{ item.status_text }}
+      </p>
+
+      {% if item.status_text == 'Start Soon' %}
       <button class="book-now-btn" data-event-id="{{ item.id }}"
         data-booked="{% if item.id in booked_event_ids %}true{% else %}false{% endif %}" style="padding: 7px 12px;
-                background: linear-gradient(to right, #7765F6, #2D7DD2);
-                color: white;
-                border: none;
-                border-radius: 4px;
-                font-size: 1rem;
-                font-weight: 500;
-                font-family: 'Poppins', sans-serif;
-                cursor: pointer;
-                transition: background 0.3s ease, transform 0.2s ease;">
+                 background: linear-gradient(to right, #7765F6, #2D7DD2);
+                 color: white;
+                 border: none;
+                 border-radius: 4px;
+                 font-size: 1rem;
+                 font-weight: 500;
+                 font-family: 'Poppins', sans-serif;
+                 cursor: pointer;
+                 transition: background 0.3s ease, transform 0.2s ease;">
         {% if item.id in booked_event_ids %}Booked{% else %}Book Now{% endif %}
       </button>
+      {% else %}
+      <button class="book-now-btn" disabled style="padding: 7px 12px;
+                 background: gray;
+                 color: white;
+                 border: none;
+                 border-radius: 4px;
+                 font-size: 1rem;
+                 font-weight: 500;
+                 font-family: 'Poppins', sans-serif;
+                 cursor: not-allowed;">
+        Time Out
+      </button>
+      {% endif %}
     </div>
     {% endfor %}
   </div>
@@ -66,6 +84,7 @@
 
   document.querySelectorAll(".book-now-btn").forEach(btn => {
     btn.addEventListener("click", function () {
+      if (this.disabled) return;  // Ignore Time Out buttons
       selectedEventId = this.dataset.eventId;
       selectedButton = this;
       isBooked = this.dataset.booked === "true";
@@ -87,10 +106,8 @@
           })
             .then(res => res.json())
             .then(data => {
-              if (data.success) {
-                selectedButton.textContent = "Book Now";
-                selectedButton.dataset.booked = "false";
-              }
+              selectedButton.textContent = "Book Now";
+              selectedButton.dataset.booked = "false";
               modal.style.display = "none";
             });
         };
@@ -180,7 +197,7 @@
   .search-form {
     position: absolute;
     top: 90px;
-    left: 30px;
+    left: 50px;
     width: 600px;
     display: flex;
     gap: 14px;
@@ -229,16 +246,16 @@
   .event-results {
     position: absolute;
     top: 170px;
-    left: 50px;
+    left: 70px;
     width: calc(100% - 100px);
-    max-width: 1200px;
-}
+    max-width: 1400px;
+  }
 
   .event-cards-container {
     display: flex;
     flex-wrap: wrap;
-    gap: 20px;
-}
+    gap: 12px;
+  }
 
   .event-card {
     background: white;
@@ -247,8 +264,8 @@
     padding: 20px 25px;
     transition: transform 0.3s ease, box-shadow 0.3s ease;
     cursor: default;
-    width: 300px;
-}
+    width: 320px;
+  }
 
   .event-card:hover {
     transform: translateY(-5px);
@@ -262,6 +279,21 @@
     font-size: 1.3rem;
   }
 
+  .start-soon {
+    color: blueviolet;
+    font-weight: bold;
+  }
+
+  .ongoing {
+    color: green;
+    font-weight: bold;
+  }
+
+  .ended {
+    color: red;
+    font-weight: bold;
+  }
+
   .event-card p {
     margin: 6px 0;
     font-size: 1rem;
@@ -269,73 +301,70 @@
   }
 
   @media (max-width: 768px) {
-  .search-form {
-    position: static;
-    width: 90vw;
-    margin: 20px auto;
-    flex-direction: column;
-    align-items: stretch;
-    gap: 10px;
-    padding: 10px;
-  }
+    .search-form {
+      position: static;
+      width: 90vw;
+      margin: 20px auto;
+      flex-direction: column;
+      align-items: stretch;
+      gap: 10px;
+      padding: 10px;
+    }
 
-  .search-form input[type="text"],
-  .search-form input[type="date"],
-  .search-form button {
-    width: 100%;
-    font-size: 0.95rem;
-  }
+    .search-form input[type="text"],
+    .search-form input[type="date"],
+    .search-form button {
+      width: 100%;
+      font-size: 0.95rem;
+    }
 
-  /* Results section adjustments */
-  .event-results {
-    position: static;
-    width: 90vw;
-    margin: 0 auto;
-  }
+    .event-results {
+      position: static;
+      width: 90vw;
+      margin: 0 auto;
+    }
 
-  .event-cards-container {
-    flex-direction: column;
-    align-items: center;
-  }
+    .event-cards-container {
+      flex-direction: column;
+      align-items: center;
+    }
 
-  .event-card {
-    width: 100%;
-    padding: 16px 20px;
-  }
+    .event-card {
+      width: 100%;
+      padding: 16px 20px;
+    }
 
-  .event-title {
-    font-size: 1.2rem;
-  }
+    .event-title {
+      font-size: 1.2rem;
+    }
 
-  .event-card p {
-    font-size: 0.95rem;
-  }
+    .event-card p {
+      font-size: 0.95rem;
+    }
 
-  /* Modal adjustments */
-  .modal-content {
-    width: 90%;
-    margin: 30% auto;
-    padding: 15px;
-  }
+    .modal-content {
+      width: 90%;
+      margin: 30% auto;
+      padding: 15px;
+    }
 
-  .btn {
-    font-size: 0.95rem;
-    padding: 10px;
-    width: 100%;
-    max-width: 160px;
-  }
+    .btn {
+      font-size: 0.95rem;
+      padding: 10px;
+      width: 100%;
+      max-width: 160px;
+    }
 
-  .modal-buttons {
-    flex-direction: column;
-    gap: 12px;
-  }
+    .modal-buttons {
+      flex-direction: column;
+      gap: 12px;
+    }
 
-  /* Button tweaks */
-  .book-now-btn {
-    font-size: 0.95rem;
-    padding: 10px;
-    width: 100%;
+    .book-now-btn {
+      font-size: 0.95rem;
+      padding: 10px;
+      width: 100%;
+    }
   }
-}
 </style>
 {% endblock section %}
