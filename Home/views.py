@@ -95,7 +95,12 @@ def book_event(request):
         if student and event:
             # Save booking only if not already booked
             if not Booking.objects.filter(student=student, event=event).exists():
-                Booking.objects.create(student=student, event=event)
+                Booking.objects.create(
+    student=student,
+    event=event,
+    student_name=student.first_name,
+    event_id_ref=event.id
+)
         return HttpResponse("")
     return HttpResponse("")    
 

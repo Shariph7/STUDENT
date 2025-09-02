@@ -62,10 +62,11 @@ class Students(models.Model):
     def __str__(self):
         return f"{self.first_name} {self.last_name} ({self.student_id})"
 
-# Booking events
 class Booking(models.Model):
     student = models.ForeignKey(Students, on_delete=models.CASCADE, related_name="bookings")
     event = models.ForeignKey(Events, on_delete=models.CASCADE, related_name="bookings")
+    student_name = models.CharField(max_length=50, default="Unknown Student")
+    event_id_ref = models.IntegerField(default=1)
     booked_at = models.DateTimeField(default=timezone.now)
 
     def __str__(self):
